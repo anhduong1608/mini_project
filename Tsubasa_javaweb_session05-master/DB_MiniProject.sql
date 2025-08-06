@@ -1,0 +1,66 @@
+create database mini_project_tsubasplus;
+use mini_project_tsubasplus;
+create table Customer(
+	id int auto_increment primary key,
+	username varchar(100) not null unique,
+	password varchar(255) not null,
+	phone varchar(20) not null unique,
+	address varchar(255),
+	gender bit,
+	email varchar(100) not null unique,
+	role enum('ADMIN','USER'));
+
+insert into UserSession(username,password,phone,address,gender,email,role) values
+	('user1','1234','09122424','Thái Bình',1,'user1@gmail.com','USER'),
+    ('admin1','1234','09122423','Thái Nguyên',0,'admin1@gmail.com','ADMIN');
+
+create table Movie(
+	id int auto_increment primary key,
+	title varchar(255) not null unique,
+	director varchar(70),
+	genre varchar(50),
+	description varchar(255),
+	duration int,
+	language varchar(30));
+
+insert into Movie (title,director,genre,description,duration,language) values
+	('Anh Hùng Xạ Điêu','Kim Dung','Kiếm Hiệp','Kiếm Hiệp Kim Dung',150,'Việt Nam'),
+    ('Tây Du Ký','Dương Khiết Đan','Viễn Tưởng','Tuổi thơ vui vẻ',250,'Việt Nam');
+    
+create table ScreenRoom(
+	id int auto_increment primary key,
+	screenRoomName varchar(255) not null unique,
+	totalSeat int check(totalSeat>0));
+
+create table Schedule(
+	id int auto_increment primary key,
+	movieTitle varchar(255),
+	movieId int,
+	showTime date,
+	screenRoomId int,
+	availableSeats int,
+	format varchar(10),
+    foreign key(movieId) references Movie(id),
+    foreign key(screenRoomId) references ScreenRoom(id));
+
+insert into ScreenRoom(screenRoomName,totalSeat) values
+	('Phòng chiếu 1',100),
+    ('Phòng chiếu 2',200),
+    ('Phòng chiếu 3',150);
+
+insert into Schedule(movieTitle,movieId,showTime,screenRoomId,availableSeats,format) values
+	('Anh Hùng Xạ Điêu',1,'2025-08-05',1,50,'2D'),
+    ('Anh Hùng Xạ Điêu',1,'2025-10-05',2,100,'2D'),
+    ('Tây Du Ký',2,'2025-08-05',2,100,'3D'),
+    ('Tây Du Ký',2,'2025-10-05',3,120,'3D');
+
+create table Ticket(
+	id Integer auto_increment primary key,
+	customerId int,
+	scheduleId int,
+	seatName varchar(20),
+	totalMoney double,
+	created_at date,
+    foreign key(customerId) references UserSession(id),
+    foreign key(scheduleId) references Schedule(id));
+
